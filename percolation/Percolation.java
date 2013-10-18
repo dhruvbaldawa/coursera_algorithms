@@ -12,17 +12,17 @@ public class Percolation {
         if (i < 0 || i >= SIZE || j < 0 || j >= SIZE) {
             throw new IndexOutOfBoundsException();
         }
-        return (i-1)*SIZE + (j-1)*SIZE;
+        return i*SIZE + j;
     }
 
-    private boolean connectNeighbor(int index, int i, int j) {
+    private void connectNeighbor(int index, int i, int j) {
         try {
             if(isOpen(i, j)) {
-                percolation.union(index, indexOf(i, j));
+                percolation.union(index, getIndex(i, j));
             }
         }
         catch (IndexOutOfBoundsException e) {
-            return false;
+            return;
         }
     }
     public Percolation(int N) {
@@ -36,9 +36,10 @@ public class Percolation {
             site[i] = false;
         }
 
-        // open the virtual top and virtual bottom tops
+        // open the virtual top
         site[virtualTop] = true;
-        site[virtualBottom] = true;
+        // close the virtual bottom
+        site[virtualBottom] = false;
     }
 
     public void open(int i, int j) {
@@ -57,10 +58,10 @@ public class Percolation {
             percolation.union(virtualBottom, index);
         }
         // Connecting to all the valid 4-neighbors.
-        connectNeighbor(i+1, j);
-        connectNeighbor(i-1, j);
-        connectNeighbor(i, j+1);
-        connectNeighbor(i, j-1);
+        connectNeighbor(index, i+1, j);
+        connectNeighbor(index, i-1, j);
+        connectNeighbor(index, i, j+1);
+        connectNeighbor(index, i, j-1);
     }
 
     public boolean isOpen(int i, int j) {
@@ -73,5 +74,57 @@ public class Percolation {
 
     public boolean percolates() {
         return percolation.connected(virtualTop, virtualBottom);
+    }
+
+    public void printStatus() {
+        /**
+        * Prints the status of the percolation board.
+        * "#" if full, "." otherwise
+        * "@" if open, "." otherwise
+        * status of each cell is of the order <full><open>
+        **/
+        for(int i=0; i<SIZE; i++) {
+            for(int j=0; j<SIZE; j++) {
+                if(isFull(i, j)) {
+                    System.out.print("#");
+                }
+                else {
+                    System.out.print(".");
+                }
+
+                if(isOpen(i, j)) {
+                    System.out.print("@");
+                }
+                else {
+                    System.out.print(".");
+                }
+                System.out.print(" ");
+            }
+            System.out.println();
+        }
+    }
+
+    public static void main(String args[]) {
+        /** Test Case **/
+        Percolation p = new Percolation(5);
+        // Check opening
+        p.open(0, 0);
+        assert p.isOpen(0, 0);
+        // Check connection with virtualTop
+        assert p.isFull(0, 0);
+        // Open diagonally opposite site, should not be full
+        p.open(1, 1);
+        assert !p.isFull(1, 1);
+        // Open few more sites, and check percolation
+        p.open(1, 0);
+        assert p.isFull(1, 0);  // Vertical percolation
+        assert p.isFull(1, 1);  // Horizontal percolation
+        assert !p.percolates();  // system should not percolate
+        // Quickly take the system to percolation state
+        p.open(2, 1);
+        p.open(3, 1);
+        p.open(4, 1);
+        assert p.percolates();  // system should have percolated now
+        p.printStatus();
     }
 }
