@@ -8,8 +8,12 @@ public class PercolationStats {
         int openSites = 0;
 
         do {
-            p.open(StdRandom.uniform(gridSize), StdRandom.uniform(gridSize));
-            openSites += 1;
+            int i = StdRandom.uniform(gridSize);
+            int j = StdRandom.uniform(gridSize);
+            if(!p.isOpen(i, j)) {
+                p.open(i, j);
+                openSites += 1;
+            }
         } while(!p.percolates());
 
         return openSites;
@@ -38,11 +42,11 @@ public class PercolationStats {
     }
 
     public double confidenceLo() {
-        return mean() - 1.96 * StdStats.var(results);
+        return mean() - 1.96 * stddev();
     }
 
     public double confidenceHi() {
-        return mean() + 1.96 * StdStats.var(results);
+        return mean() + 1.96 * stddev();
     }
 
     public static void main(String[] args) {
