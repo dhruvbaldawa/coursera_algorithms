@@ -131,8 +131,24 @@ public class Deque<Item> implements Iterable<Item> {
         assert !d.isEmpty();
         assert d.size() == 1;
         assert d.removeFirst() == "z";
+    }
 
-        assert false: "All tests pass!";
+    private static void testBasicDequeOperations2() {
+        Deque<String> d = new Deque<String>();
+
+        d.addFirst("d");
+        d.addFirst("c");
+        d.addFirst("b");
+        d.addFirst("a");
+        d.addLast("e");
+        d.addLast("f");
+
+        assert d.removeFirst() == "a";
+        assert d.removeLast() == "f";
+        assert d.removeFirst() == "b";
+        assert d.removeLast() == "e";
+        assert d.removeFirst() == "c";
+        assert d.removeLast() == "d";
     }
 
     private static void testIterator() {
@@ -154,6 +170,8 @@ public class Deque<Item> implements Iterable<Item> {
 
     public static void main(String[] args) {
         testBasicDequeOperations();
+        testBasicDequeOperations2();
         testIterator();
+        assert false: "*** All tests pass! ***";
     }
 }
