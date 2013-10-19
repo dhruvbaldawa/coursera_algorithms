@@ -22,14 +22,12 @@ public class Percolation {
         site[virtualBottom] = false;
     }
 
-    private int getIndex(int x, int y) {
-        // By convention, x, y are integers from 1..N
-        int i = x - 1;
-        int j = y - 1;
-        if (i < 0 || i >= SIZE || j < 0 || j >= SIZE) {
+    private int getIndex(int i, int j) {
+        // By convention, i, j are integers from 1..N
+        if (i < 1 || i > SIZE || j < 1 || j > SIZE) {
             throw new IndexOutOfBoundsException();
         }
-        return i*SIZE + j;
+        return (i-1)*SIZE + (j-1);
     }
 
     private boolean isValidNeighbor(int i, int j) {
@@ -43,6 +41,7 @@ public class Percolation {
         }
         return false;
     }
+
     private void connectNeighbor(int index, int i, int j) {
         if (isValidNeighbor(i, j)) {
             percolation.union(index, getIndex(i, j));
@@ -77,10 +76,10 @@ public class Percolation {
 
     public boolean isFull(int i, int j) {
         return percolation.connected(virtualTop, getIndex(i, j)) && (
-            (isValidNeighbor(i+1, j) && site[getIndex(i+1, j)]) ||
-            (isValidNeighbor(i-1, j) && site[getIndex(i-1, j)]) ||
-            (isValidNeighbor(i, j+1) && site[getIndex(i, j+1)]) ||
-            (isValidNeighbor(i, j-1) && site[getIndex(i, j-1)])
+            (isValidNeighbor(i+1, j) && site[getIndex(i+1, j)])
+            || (isValidNeighbor(i-1, j) && site[getIndex(i-1, j)])
+            || (isValidNeighbor(i, j+1) && site[getIndex(i, j+1)])
+            || (isValidNeighbor(i, j-1) && site[getIndex(i, j-1)])
         );
     }
 
