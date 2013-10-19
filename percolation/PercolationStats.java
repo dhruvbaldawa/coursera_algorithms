@@ -22,8 +22,8 @@ public class PercolationStats {
         int openSites = 0;
 
         do {
-            int i = StdRandom.uniform(gridSize);
-            int j = StdRandom.uniform(gridSize);
+            int i = StdRandom.uniform(1, gridSize+1);
+            int j = StdRandom.uniform(1, gridSize+1);
             if (!p.isOpen(i, j)) {
                 p.open(i, j);
                 openSites += 1;

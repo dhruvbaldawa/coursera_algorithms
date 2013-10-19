@@ -32,14 +32,20 @@ public class Percolation {
         return i*SIZE + j;
     }
 
-    private void connectNeighbor(int index, int i, int j) {
+    private boolean isValidNeighbor(int i, int j) {
         try {
             if (isOpen(i, j)) {
-                percolation.union(index, getIndex(i, j));
+                return true;
             }
         }
         catch (IndexOutOfBoundsException e) {
-            return;
+            return false;
+        }
+        return false;
+    }
+    private void connectNeighbor(int index, int i, int j) {
+        if (isValidNeighbor(i, j)) {
+            percolation.union(index, getIndex(i, j));
         }
     }
 
@@ -70,7 +76,12 @@ public class Percolation {
     }
 
     public boolean isFull(int i, int j) {
-        return percolation.connected(virtualTop, getIndex(i, j));
+        return percolation.connected(virtualTop, getIndex(i, j)) && (
+            (isValidNeighbor(i+1, j) && site[getIndex(i+1, j)]) ||
+            (isValidNeighbor(i-1, j) && site[getIndex(i-1, j)]) ||
+            (isValidNeighbor(i, j+1) && site[getIndex(i, j+1)]) ||
+            (isValidNeighbor(i, j-1) && site[getIndex(i, j-1)])
+        );
     }
 
     public boolean percolates() {
@@ -105,8 +116,9 @@ public class Percolation {
         }
     }
 
-    public static void main(String[] args) {
+    private static void testBasicCase() {
         /** Test Case **/
+        System.out.println("\nTest basic working.");
         Percolation p = new Percolation(5);
         // Check opening
         p.open(1, 1);
@@ -127,5 +139,26 @@ public class Percolation {
         p.open(5, 2);
         assert p.percolates();  // system should have percolated now
         p.printStatus();
+    }
+
+    private static void testBackwash() {
+        /** Test Case **/
+        System.out.println("\nTest backwash.");
+        Percolation p = new Percolation(5);
+        p.open(1, 1);
+        p.open(2, 1);
+        p.open(3, 1);
+        p.open(4, 1);
+        p.open(5, 1);
+        p.open(5, 5);
+
+        assert p.isFull(5, 1);  // 5, 1 should be full because of percolation
+        assert !p.isFull(5, 5);  // 5, 5 should not be full (else its backwash)
+        p.printStatus();
+    }
+
+    public static void main(String[] args) {
+        testBasicCase();
+        testBackwash();
     }
 }
