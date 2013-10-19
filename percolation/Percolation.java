@@ -2,6 +2,7 @@ public class Percolation {
     private boolean[] site;
     private int SIZE;
     private WeightedQuickUnionUF percolation;
+    private WeightedQuickUnionUF fullness;
     private int virtualTop;
     private int virtualBottom;
 
@@ -9,6 +10,7 @@ public class Percolation {
     public Percolation(int N) {
         SIZE = N;
         percolation = new WeightedQuickUnionUF(SIZE*SIZE + 2);
+        fullness = new WeightedQuickUnionUF(SIZE*SIZE + 2);
         site = new boolean[SIZE*SIZE + 2];
         virtualTop = SIZE*SIZE;
         virtualBottom = SIZE*SIZE + 1;
@@ -46,6 +48,7 @@ public class Percolation {
     private void connectNeighbor(int index, int i, int j) {
         if (isValidNeighbor(i, j)) {
             percolation.union(index, getIndex(i, j));
+            fullness.union(index, getIndex(i, j));
         }
     }
 
@@ -59,6 +62,11 @@ public class Percolation {
         // If opening in the top row, connect to the virtual top
         if (i == 1) {
             percolation.union(virtualTop, index);
+            fullness.union(virtualTop, index);
+        }
+
+        if (i == SIZE) {
+            percolation.union(virtualBottom, index);
         }
 
         // Connecting to all the valid 4-neighbors.
@@ -66,13 +74,6 @@ public class Percolation {
         connectNeighbor(index, i-1, j);
         connectNeighbor(index, i, j+1);
         connectNeighbor(index, i, j-1);
-
-        // If opening in the bottom row, connect to the virtual bottom
-        for (int k = 1; k <= SIZE; k++) {
-            if (isFull(SIZE, k)) {
-                percolation.union(virtualBottom, getIndex(SIZE, k));
-            }
-        }
     }
 
     public boolean isOpen(int i, int j) {
@@ -80,7 +81,7 @@ public class Percolation {
     }
 
     public boolean isFull(int i, int j) {
-        return percolation.connected(virtualTop, getIndex(i, j));
+        return fullness.connected(virtualTop, getIndex(i, j));
     }
 
     public boolean percolates() {
