@@ -75,12 +75,18 @@ public class Percolation {
     }
 
     public boolean isFull(int i, int j) {
-        return percolation.connected(virtualTop, getIndex(i, j)) && (
-            (isValidNeighbor(i+1, j) && site[getIndex(i+1, j)])
-            || (isValidNeighbor(i-1, j) && site[getIndex(i-1, j)])
-            || (isValidNeighbor(i, j+1) && site[getIndex(i, j+1)])
-            || (isValidNeighbor(i, j-1) && site[getIndex(i, j-1)])
-        );
+        boolean connectedToTop = percolation.connected(virtualTop, getIndex(i, j));
+        // only if not first row check for connected full neighbors
+        if (i > 1) {
+            return connectedToTop &&  // check for backwash
+            (
+                (isValidNeighbor(i+1, j) && site[getIndex(i+1, j)])
+                || (isValidNeighbor(i-1, j) && site[getIndex(i-1, j)])
+                || (isValidNeighbor(i, j+1) && site[getIndex(i, j+1)])
+                || (isValidNeighbor(i, j-1) && site[getIndex(i, j-1)])
+            );
+        }
+        return connectedToTop;
     }
 
     public boolean percolates() {
