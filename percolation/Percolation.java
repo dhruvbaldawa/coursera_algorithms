@@ -25,6 +25,7 @@ public class Percolation {
             return;
         }
     }
+
     public Percolation(int N) {
         SIZE = N;
         percolation = new WeightedQuickUnionUF(SIZE*SIZE + 2);
